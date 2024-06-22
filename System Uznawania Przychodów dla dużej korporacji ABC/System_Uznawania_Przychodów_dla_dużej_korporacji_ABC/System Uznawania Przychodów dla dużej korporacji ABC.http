@@ -1,0 +1,6 @@
+@System_Uznawania_Przychodów_dla_dużej_korporacji_ABC_HostAddress = http://localhost:5158
+
+GET {{System_Uznawania_Przychodów_dla_dużej_korporacji_ABC_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
