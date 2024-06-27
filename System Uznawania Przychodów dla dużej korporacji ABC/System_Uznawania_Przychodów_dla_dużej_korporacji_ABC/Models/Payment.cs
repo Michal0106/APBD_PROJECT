@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Models;
 
@@ -10,10 +11,10 @@ public class Payment
     public double Amount { get; set; }
     public DateTime PaymentDate { get; set; }
     public bool IsRefunded { get; set; }
-    
-    [ForeignKey(nameof(CustomerId))]
-    public Customer Customer { get; set; }  = null!;
-    
+
+    [ForeignKey(nameof(CustomerId))] 
+    public Customer Customer { get; set; }
+
     [ForeignKey(nameof(ContractId))]
-    public Contract Contract { get; set; }  = null!;
+    public Contract Contract { get; set; }
 }

@@ -9,7 +9,7 @@ namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Services;
 public interface IContractService
 {
     Task<Contract> CreateContractAsync(ContractDto contractDto, int additionalYears);
-    Task<PaymentDTO> PayForContractAsync(PaymentDTO paymentDto, int contractId);
+    Task<Payment> PayForContractAsync(PaymentDTO paymentDto, int contractId);
 }
 
 public class ContractService : IContractService
@@ -33,6 +33,11 @@ public class ContractService : IContractService
         if (customer == null)
             throw new KeyNotFoundException("Customer not found");
 
+        if (customer is IndividualCustomer individualCustomer && individualCustomer.IsDeleted)
+        {
+            throw new InvalidOperationException("Cannot create contract for a deleted individual customer.");
+        }
+        
         var product = await _context.Products.FindAsync(contractDto.ProductId);
         if (product == null)
             throw new KeyNotFoundException("Product not found");
@@ -61,28 +66,24 @@ public class ContractService : IContractService
         return contract;
     }
     
-    public async Task<PaymentDTO> PayForContractAsync(PaymentDTO paymentDto, int contractId)
+    public async Task<Payment> PayForContractAsync(PaymentDTO paymentDto, int contractId)
     {
         var contract = await _context.Contracts.FindAsync(contractId);
         if (contract == null)
             throw new KeyNotFoundException("Contract not found");
 
-        if (DateTime.UtcNow > contract.EndDate)
+        if (paymentDto.PaymentDate > contract.EndDate)
         {
-            await RefundPayments(contractId);
+            await RefundPayments(contract.Id);
 
-            await PrepareNewOfferForCustomer(contract,contract.YearsOfUpdateSupport);
-
-            _context.Contracts.Remove(contract);
-
-            await _context.SaveChangesAsync();
-
+            await PrepareNewOfferForCustomer(contract,contract.YearsOfUpdateSupport - 1);
+            
             throw new InvalidOperationException("Payment is past the due date. A new offer has been prepared for the customer.");
         }
         
-        var payment = paymentDto.CreatePayment();
+        var payment = paymentDto.CreatePayment(contractId);
 
-        _context.Payments.Add(payment);
+        await _context.Payments.AddAsync(payment);
         await _context.SaveChangesAsync();
 
         var totalPayments = await CountTotalPayments(contractId);
@@ -94,7 +95,7 @@ public class ContractService : IContractService
             await _context.SaveChangesAsync();
         }
         
-        return paymentDto;
+        return payment;
     }
     
     private async Task PrepareNewOfferForCustomer(Contract contract, int additionalYearsOfUpdateSupport)
@@ -104,12 +105,13 @@ public class ContractService : IContractService
             CustomerId = contract.CustomerId,
             ProductId = contract.ProductId,
             Price = contract.Price,
-            YearsOfUpdateSupport = contract.YearsOfUpdateSupport,
             SoftwareVersion = contract.SoftwareVersion,
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow + (contract.EndDate - contract.StartDate)
         };
-
+        _context.Contracts.Remove(contract);
+        await _context.SaveChangesAsync();
+        
         await CreateContractAsync(newContractDto, additionalYearsOfUpdateSupport);
     }
     

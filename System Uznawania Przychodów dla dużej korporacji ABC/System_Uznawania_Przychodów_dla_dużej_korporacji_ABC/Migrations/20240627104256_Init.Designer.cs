@@ -12,8 +12,8 @@ using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Data;
 namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240620082818_InitTestValues")]
-    partial class InitTestValues
+    [Migration("20240627104256_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -176,12 +176,20 @@ namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Migrations
                     b.Property<int>("ContractId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRefunded")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContractId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Payments");
 
@@ -191,6 +199,8 @@ namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Migrations
                             Id = 1,
                             Amount = 89.989999999999995,
                             ContractId = 1,
+                            CustomerId = 1,
+                            IsRefunded = false,
                             PaymentDate = new DateTime(2023, 6, 4, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -359,7 +369,15 @@ namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Models.Customer", "Customer")
+                        .WithMany("Payments")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Contract");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Models.Contract", b =>
@@ -370,6 +388,8 @@ namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Migrations
             modelBuilder.Entity("System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Models.Customer", b =>
                 {
                     b.Navigation("Contracts");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Models.Product", b =>

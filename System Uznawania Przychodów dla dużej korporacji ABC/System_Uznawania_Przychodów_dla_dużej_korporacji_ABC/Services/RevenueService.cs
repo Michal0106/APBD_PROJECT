@@ -34,6 +34,10 @@ public class RevenueService : IRevenueService
 
     public async Task<double> CalculateCurrentRevenueForProductAsync(int productId, string currency = "PLN")
     {
+        var product = await _context.Products.FindAsync(productId);
+        if (product == null)
+            throw new KeyNotFoundException("Product not found");
+        
         var totalPayments = await _context.Contracts
             .Where(p => p.IsPaid && p.ProductId == productId)
             .SumAsync(p => p.Price);
@@ -51,6 +55,10 @@ public class RevenueService : IRevenueService
 
     public async Task<double> CalculateExpectedRevenueForProductAsync(int productId, string currency = "PLN")
     {
+        var product = await _context.Products.FindAsync(productId);
+        if (product == null)
+            throw new KeyNotFoundException("Product not found");
+        
         var totalContracts = await _context.Contracts
             .Where(c => c.ProductId == productId)
             .SumAsync(c => c.Price);

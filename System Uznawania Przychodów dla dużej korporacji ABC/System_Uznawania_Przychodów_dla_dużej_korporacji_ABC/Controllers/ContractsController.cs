@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.DTOs;
+using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Mappers;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Services;
 
 namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Controllers;
@@ -21,7 +22,8 @@ public class ContractsController : ControllerBase
         try
         {
             var contract = await _contractService.CreateContractAsync(contractDto, additionalYears);
-            return Ok(contract);
+            var responseContract = contract.CreateResponseContract();
+            return CreatedAtAction(nameof(CreateContract), new { id = contract.Id }, responseContract);
         }
         catch (KeyNotFoundException ex)
         {

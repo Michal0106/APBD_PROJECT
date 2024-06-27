@@ -14,6 +14,7 @@ public class DatabaseContext : DbContext
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<Payment> Payments { get; set; }
 
+
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
@@ -108,7 +109,8 @@ public class DatabaseContext : DbContext
                 CustomerId = 1,
                 ContractId = 1,
                 Amount = 89.99,
-                PaymentDate = new DateTime(2023, 6, 4)
+                PaymentDate = new DateTime(2023, 6, 4),
+                IsRefunded = false
             }
         );
     }
