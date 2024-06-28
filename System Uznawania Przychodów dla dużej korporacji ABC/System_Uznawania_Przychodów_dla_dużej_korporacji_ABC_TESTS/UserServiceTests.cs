@@ -15,7 +15,7 @@ public class UserServiceTests : IDisposable
     public UserServiceTests()
     {
         var options = new DbContextOptionsBuilder<DatabaseContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
 
         _context = new DatabaseContext(options);
