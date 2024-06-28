@@ -16,4 +16,17 @@ public static class PaymentMapper
             IsRefunded = false
         };
     }
+
+    public static PaymentResponseDTO CreateResponsePayment(this Payment payment)
+    {
+        return new PaymentResponseDTO()
+        {
+            Id = payment.Id,
+            CustomerId = payment.CustomerId,
+            ContractId = payment.ContractId,
+            Amount = payment.Amount,
+            PaymentDate = payment.PaymentDate,
+            IsRefunded = payment.IsRefunded
+        };
+    }
 }

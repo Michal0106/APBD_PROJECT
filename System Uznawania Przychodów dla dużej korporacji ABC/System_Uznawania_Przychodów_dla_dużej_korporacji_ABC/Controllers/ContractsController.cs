@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.DTOs;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Mappers;
@@ -5,6 +6,7 @@ using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Services;
 
 namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ContractsController : ControllerBase
@@ -41,7 +43,8 @@ public class ContractsController : ControllerBase
         try
         {
             var payment = await _contractService.PayForContractAsync(paymentDto, contractId);
-            return Ok(payment);
+            var responsePayment = payment.CreateResponsePayment();
+            return CreatedAtAction(nameof(CreateContract), new { id = payment.Id }, responsePayment);
         }
         catch (KeyNotFoundException ex)
         {

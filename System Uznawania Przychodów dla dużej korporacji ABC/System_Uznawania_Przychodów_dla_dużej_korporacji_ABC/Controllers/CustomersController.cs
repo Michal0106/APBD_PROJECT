@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.DTOs;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Models;
@@ -5,6 +6,7 @@ using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Services;
 
 namespace System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class CustomersController : ControllerBase
@@ -24,6 +26,7 @@ public class CustomersController : ControllerBase
     }
     
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCustomer(int id, [FromBody] UpdateClientDTO updateClientDto)
     {
         try
@@ -38,6 +41,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCustomer(int id)
     {
         try

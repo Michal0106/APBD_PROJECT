@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Data;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Services;
 
@@ -21,8 +22,6 @@ builder.Services.AddAuthentication(options =>
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            // ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            // ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
@@ -40,7 +39,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddAuthentication();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -48,7 +47,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Description = @"JWT Authorization header using the Bearer scheme.
                         Enter 'Bearer' [space] and then your token in the text input below.
-                        \r\n\r\nExample: 'Bearer 12345abcdef'",
+                        Example: 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -83,8 +82,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-app.UseAuthentication();
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

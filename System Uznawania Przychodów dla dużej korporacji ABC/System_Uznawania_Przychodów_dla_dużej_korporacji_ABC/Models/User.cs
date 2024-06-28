@@ -16,3 +16,8 @@ public class User
     [Required]
     public string Role { get; set; }
 }
+
+public enum UserRole
+{
+    ADMIN,STANDARD
+}

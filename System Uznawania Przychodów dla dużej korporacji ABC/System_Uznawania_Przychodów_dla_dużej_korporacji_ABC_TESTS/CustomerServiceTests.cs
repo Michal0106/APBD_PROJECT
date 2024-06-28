@@ -116,7 +116,7 @@ public class CustomerServiceTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _customerService.UpdateCustomerAsync(1, updateClientDto));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _customerService.UpdateCustomerAsync(-1, updateClientDto));
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class CustomerServiceTests
         // Arrange
         var customer = new Company
         {
-            Id = 1,
+            Id = 14,
             Name = "ABC Corp",
             Krs = "9876543210",
             PhoneNumber = "987654321",
@@ -170,6 +170,6 @@ public class CustomerServiceTests
     public async Task DeleteCustomerAsync_ShouldThrowExceptionIfCustomerNotFound()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _customerService.DeleteCustomerAsync(1));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _customerService.DeleteCustomerAsync(-1));
     }
 }
