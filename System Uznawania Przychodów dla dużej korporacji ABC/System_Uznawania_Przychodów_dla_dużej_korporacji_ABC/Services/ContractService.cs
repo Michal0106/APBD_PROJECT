@@ -138,7 +138,7 @@ public class ContractService : IContractService
     private async Task<double> CountTotalPayments(int contractId)
     {
         var totalPayments = await _context.Payments
-            .Where(p => p.ContractId == contractId)
+            .Where(p => p.ContractId == contractId && !p.IsRefunded)
             .SumAsync(p => p.Amount);
         return totalPayments;
     }

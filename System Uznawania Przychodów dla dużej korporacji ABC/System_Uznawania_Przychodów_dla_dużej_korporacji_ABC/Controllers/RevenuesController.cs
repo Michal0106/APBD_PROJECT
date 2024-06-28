@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System_Uznawania_Przychodów_dla_dużej_korporacji_ABC.Services;
 
@@ -15,6 +16,7 @@ public class RevenuesController : ControllerBase
     }
     
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetRevenue(bool countExpectedRevenue,[FromQuery] string currency = "PLN")
     {
         if (countExpectedRevenue)
@@ -30,6 +32,7 @@ public class RevenuesController : ControllerBase
     }
 
     [HttpGet("products/{productId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetRevenueForProduct(int productId, bool countExpectedRevenue, [FromQuery] string currency = "PLN")
     {
         try
